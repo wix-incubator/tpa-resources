@@ -1,4 +1,6 @@
-tpa-resources
+Third Party Developer Resources
 =============
 
-Resources in different languages to help get started interacting with Wix as a third party developer
+When interacting with the Wix API, security is paramont.  Requests to Wix and from Wix are cryptographically signed, ensuring safe data communication between your application and Wix. 
+
+To help get started, code samples in a number of different languages are provided to speed the transition into the Wix platform.
