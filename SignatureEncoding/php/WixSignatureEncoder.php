@@ -1,12 +1,11 @@
 function encode_signature($application_id, $instance_id, $method, $request_path, $query_params, $post_params, $body = '')
 {
+    $ts = date('c'); // ISO 8601 (added in PHP 5)
     $request_params = array_merge($query_params, $post_params);
+    $request_params['application-id'] = $application_id;
+    $request_params['instance-id'] = $instance_id;
+    $request_params['timestamp'] = $ts;
     ksort($request_params);
-
-    $request_params[] = $application_id;
-    $request_params[] = $instance_id;
-    $request_params[] = date('c'); // ISO 8601 (added in PHP 5)
-
     $signature_string = strtoupper($method) . "\n$request_path\n";
     foreach ($request_params as $request_param)
     {
@@ -28,5 +27,5 @@ function encode_signature($application_id, $instance_id, $method, $request_path,
         $encoded_signature = substr($encoded_signature, 0, -1);
     }
 
-    return $encoded_signature;
+    return array('signature' => $encoded_signature, 'timestamp' => $ts);
 }
