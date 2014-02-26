@@ -1,0 +1,28 @@
+{
+    "name": "WixActivityTypesSample",
+    "version": "1.0.0",
+    "description": "An example application that connects to the Wix RESTful API",
+    "main": "main.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/wix/tpa-resources"
+    },
+    "dependencies": {
+        "crypto-js": "3.1.2-2",
+        "lodash-node" : "2.4.1"
+    },
+    "engines": {
+        "node": ">= 0.10.20"
+    },
+    "keywords": [
+        "Wix"
+    ],
+    "author": "David Zuckerman",
+    "license": "Creative Commons",
+    "bugs": {
+        "url": "https://github.com/wix/tpa-resources/issues"
+    }
+}
