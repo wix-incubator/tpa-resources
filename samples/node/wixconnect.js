@@ -36,7 +36,7 @@ WixParameters.prototype = {
         } else if('string' === typeof value) {
             normalizedValue = value.trim();
         } else {
-            return this;
+            normalizedValue = value;
         }
         this.params.push({param: name, value: normalizedValue});
         return this;
@@ -45,7 +45,7 @@ WixParameters.prototype = {
         return this.params;
     },
     withParameters : function(params) {
-        this.params.concat(params);
+        this.params = this.params.concat(params);
         return this;
     },
     toQueryString : function() {
@@ -76,7 +76,7 @@ function WixAPIRequest(verb, path, secretKey, appId, instanceId) {
     this.instanceId = instanceId;
     this.postData = null;
     this.timestamp = new Date().toISOString();
-    this.wixParamMode = 'header"'
+    this.wixParamMode = 'header'
 }
 
 WixAPIRequest.prototype = {
