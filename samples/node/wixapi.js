@@ -148,7 +148,7 @@ Activities.prototype = {
         }
         var deferred = q.defer();
         var request = this.parent.createRequest("POST", "/v1/activities");
-        request.withPostData(activity);
+        request.withPostData(JSON.stringify(activity));
         request.withQueryParam("userSessionToken", userSessionToken);
         request.asWixQueryParams();
         var options = request.toHttpsOptions();
