@@ -5,21 +5,6 @@ var q = require("q");
 
 var contactUpdateSchema = require('./schemas/contactupdate.js');
 
-var WixActivityTypes = {
-    CONTACT_FORM : "contact/contact-form",
-    CONTACT_CREATE : "contacts/create",
-    CONVERSION_COMPLETE : "conversion/complete",
-    PURCHASE : "e_commerce/purchase",
-    SEND_MESSAGE : "messaging/send",
-    ALBUM_FAN : "music/album-fan",
-    ALBUM_SHARE : "music/album-share",
-    TRACK_LYRICS : "music/track-lyrics",
-    TRACK_PLAY : "music/track-play",
-    TRACK_PLAYED : "music/track-played",
-    TRACK_SHARE : "music/track-share",
-    TRACK_SKIP : "music/track-skip"
-};
-
 function WixPagingData(initialResult, wixApiCallback) {
     this.currentData = initialResult;
     this.wixApiCallback = wixApiCallback;
@@ -51,6 +36,24 @@ WixPagingData.prototype = {
     }
 };
 
+function ActivityType() {}
+
+ActivityType.prototype = {
+    CONTACT_FORM : "contact/contact-form",
+    CONTACT_CREATE : "contacts/create",
+    CONVERSION_COMPLETE : "conversion/complete",
+    PURCHASE : "e_commerce/purchase",
+    SEND_MESSAGE : "messaging/send",
+    ALBUM_FAN : "music/album-fan",
+    ALBUM_SHARE : "music/album-share",
+    TRACK_LYRICS : "music/track-lyrics",
+    TRACK_PLAY : "music/track-play",
+    TRACK_PLAYED : "music/track-played",
+    TRACK_SHARE : "music/track-share",
+    TRACK_SKIP : "music/track-skip"
+};
+
+var TYPES = new ActivityType();
 
 function WixActivity(activityType) {
     this.createdAt = new Date().toISOString();
@@ -61,6 +64,7 @@ function WixActivity(activityType) {
 }
 
 WixActivity.prototype = {
+    TYPES : TYPES,
     withLocationUrl : function(url) {
         this.activityLocationUrl = url;
         return this;
@@ -77,7 +81,7 @@ WixActivity.prototype = {
     withActivityType : function(type, withSchema) {
         this.activityType = type;
         if(withSchema) {
-            if(type == WixActivityTypes.CONTACT_FORM) {
+            if(type == this.TYPES.CONTACT_FORM) {
                 var contactFormSchema = require('./schemas/contactform.js');
                 this.activityInfo = contactFormSchema.newSchema();
             }
@@ -99,6 +103,7 @@ function Wix(secretKey, appId, instanceId) {
     this.appId = appId;
     this.instanceId = instanceId;
     this.Activities = new Activities(this);
+    this.Contacts = new Contacts(this);
     this.Insights = new Insights(this);
 };
 
@@ -109,6 +114,7 @@ Wix.prototype.Scope = {
 
 function resourceRequest(request, callback) {
     var deferred = q.defer();
+    request.asWixQueryParams();
     var options = request.toHttpsOptions();
     rest.get('https://' + options.host + options.path,
         {
@@ -136,6 +142,7 @@ function Activities(parent) {
 }
 
 Activities.prototype = {
+    TYPES : TYPES,
     newActivity : function(type) {
         return new WixActivity(type);
     },
@@ -204,7 +211,7 @@ Contacts.prototype = {
     },
     getContacts : function(cursor) {
         var request = this.parent.createRequest("GET", "/v1/contacts");
-        if(cursor !== null) {
+        if(cursor !== undefined && cursor !== null) {
             request.withQueryParam("cursor", cursor);
         }
         var wixApi = this;
@@ -227,10 +234,10 @@ Insights.prototype = {
             request.withQueryParam("scope", scope);
         }
         return resourceRequest(request, null);
-    },
+    }/*,
     getActivityTypeSummary : function(type) {
-        return resourceRequest(this.parent.createRequest("GET", "/v1/insights/activities").withPathSegment(type).withPathSegment("summary"), null);
-    },
+        return resourceRequest(this.parent.createRequest("GET", "/v1/insights/activities/").withPathSegment(type).withPathSegment("summary"), null);
+    }*/,
     getActivitySummaryForContact : function(contactId) {
         return resourceRequest(this.parent.createRequest("GET", "/v1/insights/contacts")
             .withPathSegment(contactId)
@@ -243,6 +250,5 @@ Insights.prototype = {
 module.exports = {
     getAPI : function(secretKey, appId, instanceId) {
         return new Wix(secretKey, appId, instanceId);
-    },
-    ACTIVITY_TYPES : WixActivityTypes
+    }
 };

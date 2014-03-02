@@ -11,7 +11,7 @@ function WixPaths() {
 WixPaths.prototype = {
     withSegment : function(segment) {
         if(segment !== null && segment.length > 0) {
-            this.paths.push(segment.replace(/\//g, ''));
+            this.paths.push(segment);
         }
         return this;
     },
