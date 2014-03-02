@@ -95,6 +95,9 @@ WixActivity.prototype = {
             && this.activityDetails.summary !== null
             && this.createdAt !== null
             && this.activityDetails.additionalInfoUrl !== null;
+    },
+    post : function(sessionToken, wix) {
+        return wix.Activities.postActivity(sessionToken);
     }
 };
 
@@ -220,6 +223,26 @@ Contacts.prototype = {
                 return wixApi.getContacts(cursor);
             });
         });
+    },
+    create : function(contact) {
+        var request = this.parent.createRequest("POST", "/v1/contacts");
+        var deferred = q.defer();
+        request.withPostData(JSON.stringify(contact));
+        request.asWixQueryParams();
+        var options = request.toHttpsOptions();
+        rest.postJson('https://' + options.host + options.path, contact, {
+            headers : options.headers
+        }).on('complete', function(data, response) {
+                if(response.statusCode === 200) {
+                    deferred.resolve(data.contactId);
+                } else {
+                    deferred.reject(data);
+                }
+
+            }).on('error', function(data, response) {
+                deferred.reject(data);
+            });
+        return deferred.promise;
     }
 };
 
