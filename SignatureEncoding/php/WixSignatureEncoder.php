@@ -21,7 +21,8 @@ function encode_signature($application_id, $instance_id, $method, $request_path,
     }
     $signature_string = trim($signature_string);
     
-    $signature_string .= $body;
+    if($signature_string != NULL)
+        $signature_string .= "\n" . "$body;
 
     $encoded_signature = strtr(base64_encode(hash_hmac("sha256", $signature_string, '[APP_SECRET]', TRUE)), '+/', '-_');
     while(substr($encoded_signature, -1) == '=')
