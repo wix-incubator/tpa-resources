@@ -171,14 +171,14 @@ Activities.prototype = {
     },
     getActivities : function(cursor, dateRange) {
         var request = this.parent.createRequest("GET", "/v1/activities");
-        if(cursor !== null) {
+        if(cursor !== undefined && cursor !== null) {
             request.withQueryParam("cursor", cursor);
         }
-        if(dateRange !== null) {
-            if(dateRange.from !== undefined && dateRange.from !== null) {
+        if(dateRange !== undefined && dateRange !== null) {
+            if(dateRange.hasOwnProperty('from') && dateRange.from !== null) {
                 request.withQueryParam("from", dateRange.from);
             }
-            if(dateRange.until !== undefined && dateRange.until !== null) {
+            if(dateRange.hasOwnProperty('until') && dateRange.until !== null) {
                request.withQueryParam("until", dateRange.until);
             }
         }
